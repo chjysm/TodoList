@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title> todo List 추가 </title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script>
+        $(function() {
+            let $frm = $(".login_f");
+            $frm.on("submit", function(e) {
+                e.preventDefault();
+                let myData = {
+                    "wishContents" : $('#wishContents').val()
+                };
+
+                $.ajax({
+                    type: "POST",
+                    dataType: "json",
+                    url: $frm.attr("action"),
+                    data: JSON.stringify( myData ),
+                    contentType: 'application/json',
+                    success:function(res) {
+                        alert("추가 성공");
+
+                    },
+                    error : function(res) {
+                        alert("추가 실패");
+                    }
+
+                });
+            });
+        });
+    </script>
+</head>
+<body>
+<div class="login_wrap">
+    <h1>Todo List 추가</h1>
+    <form class="login_f" method='post' action='/wish/addWish'>
+        <p>
+            <label for="wishContents">ToDo 내용</label>
+            <input type="text" name="wishContents" id="wishContents"  />
+        </p>
+        <p><input type="submit" value="추가" class="add_btn" /></p>
+    </form>
+</div>
+</body>
+</html>

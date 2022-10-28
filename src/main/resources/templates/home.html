@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title> ToDo List </title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $("#viewAll").click(function(){
+                let oData = {
+                };
+
+                $.ajax({
+                    type: "POST",
+                    url: "/wish/getWishList",
+                    data: JSON.stringify( oData ),
+                    dataType: "json",
+                    contentType: 'application/json',
+                    success:function(res) {
+                        let o = res.content;
+                        console.log(o);
+
+                        let html = null;
+                        for(let i=0;i<o.length;i++){
+                            html+="<tr>"
+                                +"<td>"+o[i].wishNo+"</td>"
+                                +"<td>"+o[i].wishContents+"</td>"
+                                +"<td>"+"<button type='button' class='stateButton' value="+o[i].wishNo+">" + o[i].wishStatus + "</button>"+"</td>"
+                                +"<td>"+o[i].createdDate+"</td></tr>";
+                        }
+                        $('#gridBody').html(html);
+
+                        $(".stateButton").click(function(){
+
+                            let wishStatusName = this.innerHTML;
+                            if( wishStatusName == 'TODO' ){
+                                wishStatusName = 'ONGOING';
+                            } else if ( wishStatusName == 'ONGOING'){
+                                wishStatusName = 'COMPLETETION';
+                            } else {
+                                wishStatusName = 'TODO';
+                            }
+
+                            let oData = {
+                                'wishNo' : this.value,
+                                'wishStatusName' : wishStatusName
+                            };
+
+                            $.ajax({
+                                type: "POST",
+                                url: "/wish/updateWish",
+                                data: JSON.stringify( oData ),
+                                dataType: "json",
+                                contentType: 'application/json',
+                                success:function(res) {
+                                    alert('변경 성공! 재조회하세요');
+                                }
+                            });
+                        });
+                    }
+                });
+            });
+
+            $("#viewRecentOne").click(function(){
+                let oData = {
+                };
+
+                $.ajax({
+                    type: "POST",
+                    url: "/wish/getRecentOneWish",
+                    data: JSON.stringify( oData ),
+                    dataType: "json",
+                    contentType: 'application/json',
+                    success:function(res) {
+                        let o = res.content;
+                        console.log(o);
+
+                        let html = "<tr>"
+                            +"<td>"+o.wishNo+"</td>"
+                            +"<td>"+o.wishContents+"</td>"
+                            +"<td>"+"<button type='button' class='stateButton' value="+o.wishNo+">" + o.wishStatus + "</button>"+"</td>"
+                        +"<td>"+o.createdDate+"</td></tr>";
+                        $('#gridBody').html(html);
+
+                        $(".stateButton").click(function(){
+
+                            let wishStatusName = this.innerHTML;
+                            if( wishStatusName == 'TODO' ){
+                                wishStatusName = 'ONGOING';
+                            } else if ( wishStatusName == 'ONGOING'){
+                                wishStatusName = 'COMPLETETION';
+                            } else {
+                                wishStatusName = 'TODO';
+                            }
+
+                            let oData = {
+                                'wishNo' : this.value,
+                                'wishStatusName' : wishStatusName
+                            };
+
+                            $.ajax({
+                                type: "POST",
+                                url: "/wish/updateWish",
+                                data: JSON.stringify( oData ),
+                                dataType: "json",
+                                contentType: 'application/json',
+                                success:function(res) {
+                                    alert('변경 성공! 재조회하세요');
+                                }
+                            });
+                        });
+                    }
+                });
+            });
+
+            $("#addWish").click(function(){
+               window.open("/addWishPopup",'popup','width=500px,height=500px');
+            });
+
+            $("#withdrawal").click(function(){
+                $.ajax({
+                    type: "POST",
+                    url: "/member/withdrawal",
+                    data: JSON.stringify( {  } ),
+                    dataType: "json",
+                    contentType: 'application/json',
+                    success:function(res) {
+                        alert('탈퇴 성공');
+                        location.href = "/";
+                    }
+                });
+            });
+
+
+        });
+
+
+    </script>
+</head>
+<body>
+<div class="login_wrap">
+    <h1>ToDo List</h1>
+    <P>
+        <button type="button" id="viewAll">모두 보기</button>
+        <button type="button" id="viewRecentOne"/>가장 최근 하나</button>
+        <button type="button" id="withdrawal"/>회원 탈퇴</button>
+    </P>
+    <table border="1">
+        <thead>
+            <tr>
+                <td>번호</td>
+                <td>ToDo 내용</td>
+                <td>상태</td>
+                <td>생성일</td>
+            </tr>
+        </thead>
+        <tbody id="gridBody">
+
+        </tbody>
+    </table>
+    <button type="button" id="addWish">Todo 작성</button>
+</div>
+</body>
+</html>
